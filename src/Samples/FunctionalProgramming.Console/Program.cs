@@ -9,6 +9,31 @@ namespace FunctionalProgramming.Console
     {
         static void Main(string[] args)
         {
+            MainProgram();
+            MainProgramWithFunctional();
+        }
+
+        private static void MainProgramWithFunctional()
+        {
+            var selectBox =
+                Disposible
+                    .Using(
+                        StreamFactory.GetStream,
+                        stream => 
+                            new byte[stream.Length]
+                            .Tee(b => stream.Read(b, 0, (int)stream.Length)))
+                    .Map(value => Encoding.UTF8.GetString(value))
+                    .Split(new[] { Environment.NewLine, }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select((s, ix) => Tuple.Create(ix, s))
+                    .ToDictionary(k => k.Item1, v => v.Item2)
+                    .Map(options => BuildSelectBoxWithFunctional(options, "theDoctors", true))
+                    .Tee(System.Console.WriteLine);
+
+            System.Console.ReadLine();
+        }
+
+        private static void MainProgram()
+        {
             byte[] buffer;
 
             using (var stream = StreamFactory.GetStream())
@@ -25,11 +50,9 @@ namespace FunctionalProgramming.Console
                     .Select((s, ix) => Tuple.Create(ix, s))
                     .ToDictionary(k => k.Item1, v => v.Item2);
 
-            var selectBox  = BuildSelectBox(options, "theDoctors", true);
-            var selectBox2 = BuildSelectBoxWithFunctional(options, "theDoctors", true);
+            var selectBox = BuildSelectBox(options, "theDoctors", true);
 
             System.Console.WriteLine(selectBox);
-            System.Console.WriteLine(selectBox2);
 
             System.Console.ReadLine();
         }
