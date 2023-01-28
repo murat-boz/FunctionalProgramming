@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33214.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BC3BB79C-E0DD-4571-BE5C-CCE4BE53430F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HelloWorld", "HelloWorld", "{7A70C340-6860-4800-A072-A1CBD85444E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalProgramming", "src\HelloWorld\FunctionalProgramming\FunctionalProgramming.csproj", "{19D85F29-4013-40E1-9274-435FD2A5CF8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19D85F29-4013-40E1-9274-435FD2A5CF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D85F29-4013-40E1-9274-435FD2A5CF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D85F29-4013-40E1-9274-435FD2A5CF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D85F29-4013-40E1-9274-435FD2A5CF8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7A70C340-6860-4800-A072-A1CBD85444E5} = {BC3BB79C-E0DD-4571-BE5C-CCE4BE53430F}
+		{19D85F29-4013-40E1-9274-435FD2A5CF8B} = {7A70C340-6860-4800-A072-A1CBD85444E5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {60069911-8DE5-4432-A4B2-3592B22D7161}
+	EndGlobalSection
+EndGlobal
