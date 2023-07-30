@@ -1,45 +1,59 @@
+using System.Linq.Expressions;
+using QueryPredicates = System.Collections.Generic.Dictionary<string, System.Func<string, System.Func<Vector3d, bool>>>;
+
+var queryParameterMap = new QueryPredicates();
+
+//var createXCondition = CreateCondition(v => v.x);
+//var createYCondition = CreateCondition(v => v.y);
+//var createZCondition = CreateCondition(v => v.z);
+
+Func<int, int, bool> GetComparison(char c)
+{
+    return c switch
+    {
+        'e' => (a, b) => a == b,
+        'l' => (a, b) => a < b,
+        'g' => (a, b) => a > b,
+    };
+}
+
+var properties = typeof(Vector3d).GetProperties();
+
+var vectorParam = Expression.Parameter(typeof(Vector3d)); //  CreateCondition(v => v.x) : v
+
+foreach (var propertyInfo in properties)
+{
+    var propertyAccess = Expression.Property(vectorParam, propertyInfo); // CreateCondition(v => v.x) : v.x, v.y, v.z
+    var propertyValue  = Expression.Lambda<Func<Vector3d, int>>(propertyAccess, vectorParam).Compile(); // CreateCondition(v => v.x) : (v => v.x)
+
+    queryParameterMap[propertyInfo.Name.ToLower()] = str =>
+    {
+        var comp   = GetComparison(str[0]);
+        var number = int.Parse(str[1..]);
+
+        return vector => comp(propertyValue(vector), number);
+    };
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton(queryParameterMap);
 builder.Services.AddSingleton<Graph>();
 
 var app = builder.Build();
 
-//'e' => x => v => v.X == x
-//'l' => x => v => v.X < x
-//'g' => x => v => v.X > x
-
-var createXCondition = CreateCondition(v => v.x);
-var createYCondition = CreateCondition(v => v.y);
-var createZCondition = CreateCondition(v => v.z);
-
-Func<string, Func<Vector3d, bool>> CreateCondition(Func<Vector3d, int> coordSelector)
-{
-    return val => val switch
-    {
-        ['e', .. var rest] => v => coordSelector(v) == int.Parse(rest),
-        ['l', .. var rest] => v => coordSelector(v) < int.Parse(rest),
-        ['g', .. var rest] => v => coordSelector(v) > int.Parse(rest),
-    };
-};
-
-
-app.MapGet("/", (string? x, string? y, string? z, Graph g) =>
+app.MapGet("/", (HttpRequest req, QueryPredicates queryPredicates, Graph g) =>
 {
     IEnumerable<Vector3d> query = g;
 
-    if (x != null)
+    foreach (var (key, values) in req.Query)
     {
-        query = query.Where(createXCondition(x));
-    }
+        string? val = values;
 
-    if (y != null)
-    {
-        query = query.Where(createYCondition(y));
-    }
-
-    if (z != null)
-    {
-        query = query.Where(createZCondition(z));
+        if (!string.IsNullOrEmpty(val) && queryPredicates.TryGetValue(key, out var predicate))
+        {
+            query = query.Where(predicate(val));
+        }
     }
 
     return query;
