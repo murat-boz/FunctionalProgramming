@@ -34,12 +34,12 @@ app.MapGet("/", (string? x, string? y, string? z, Graph g) =>
 
     if (y != null)
     {
-        query = query.Where(createXCondition(y));
+        query = query.Where(createYCondition(y));
     }
 
     if (z != null)
     {
-        query = query.Where(createXCondition(z));
+        query = query.Where(createZCondition(z));
     }
 
     return query;
